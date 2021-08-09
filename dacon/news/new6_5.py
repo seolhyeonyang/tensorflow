@@ -7,10 +7,12 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 import tensorflow as tf
 from tensorflow.keras.layers import Input, Dense, BatchNormalization, Dropout
 from tensorflow.keras import Sequential
-from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
 from tensorflow.keras.models import load_model
 from tensorflow.keras import regularizers
 from datetime import datetime
+from tensorflow.keras.optimizers import Adam
+
 
 
 train      = pd.read_csv('/study/dacon/news/_data/train_data.csv')
@@ -29,7 +31,7 @@ train_text = train["cleaned_title"].tolist()
 test_text = test["cleaned_title"].tolist()
 train_label = np.asarray(train.topic_idx)
 
-tfidf = TfidfVectorizer(analyzer='word', sublinear_tf=True, ngram_range=(1, 2), max_features=150000, binary=False)
+tfidf = TfidfVectorizer(analyzer='word', sublinear_tf=True, ngram_range=(1, 2), max_features=30000, binary=False)
 
 tfidf.fit(train_text)
 
@@ -40,7 +42,7 @@ test_tf_text  = tfidf.transform(test_text).astype('float32')
 
 def dnn_model():
     model = Sequential()
-    model.add(Dense(150, input_dim = 150000, activation = "relu"))
+    model.add(Dense(500, input_dim = 30000, activation = "relu"))
     model.add(Dropout(0.8))
     model.add(Dense(7, activation = "softmax",
                     kernel_regularizer=regularizers.l2(0.001),
@@ -57,26 +59,31 @@ tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=logdir,histogram_f
 date = datetime.now()
 date_time = date.strftime('%m%d_%H%M')
 
-filepath = '/study/dacon/news/_save/'
+filepath = '/study2/dacon/news/_save/'
 filename = '{epoch:04d}_{val_accuracy:.4f}.hdf5'
-modelpath = ''.join([filepath, 'YSH5_', date_time, "-", filename])
+modelpath = ''.join([filepath, 'YSH11_', date_time, "-", filename])
 ###################################################
 
-model.compile(loss = 'sparse_categorical_crossentropy', optimizer = tf.optimizers.Adam(0.001), metrics = ['accuracy'])
+optimizer = Adam(lr=0.001)
 
-es = EarlyStopping(monitor= 'val_accuracy', patience=10, mode='auto', verbose=2, restore_best_weights=True)
+model.compile(loss = 'sparse_categorical_crossentropy', optimizer = optimizer, metrics = ['accuracy'])
+
+es = EarlyStopping(monitor= 'val_accuracy', patience=30, mode='auto', verbose=2, restore_best_weights=True)
 
 cp = ModelCheckpoint(monitor='val_accuracy', save_best_only=True, mode='auto',
                     filepath= modelpath)
 
+reduce_lr = ReduceLROnPlateau(monitor= 'val_accuracy', patience=5, mode='auto', verbose=1, factor=0.05)
+
+
 history = model.fit(x = train_tf_text[:40000], y = train_label[:40000],
                     validation_data =(train_tf_text[40000:], train_label[40000:]),
-                    epochs = 200, callbacks=[es, cp, tensorboard_callback], verbose=2)
+                    epochs = 2000, callbacks=[es, cp, tensorboard_callback, reduce_lr], verbose=2)
 
-model.save('/study/dacon/news/_save/YSH5.h5')
+model.save('/study2/dacon/news/_save/YSH11.h5')
 
 # print('=================== load_model ===================')
-# model = load_model('/study/dacon/news/_save/YSH3_0802_0155-0012_0.7888.hdf5')
+# model = load_model('/study2/dacon/news/_save/YSH5_0809_1203-0005_0.7890.hdf5')
 
 results = model.evaluate(train_tf_text, train_label)
 # print(results)
@@ -95,8 +102,12 @@ temp['index'] = np.array(range(45654,45654+9131))
 temp = temp.set_index('index')
 
 
-temp.to_csv('/study/dacon/news/_save/submission5.csv')
+temp.to_csv('/study2/dacon/news/_save/submission11.csv')
 
 '''
-loss: 0.0850 - accuracy: 0.9772 - val_loss: 0.6947 - val_accuracy: 0.7856
+YSH5
+accuracy :  0.9524028301239014
+
+YSH6
+accuracy :  0.876155436038971
 '''
