@@ -29,7 +29,7 @@ x_test = scaler.transform(x_test)
 
 from sklearn.utils import all_estimators
 #from sklearn.utils.testing import all_estimators
-#^ estimators = 추정량, (testind이 사라짐)
+#^ estimators = 추정량, (testing이 사라짐)
 
 
 allAlgorithms = all_estimators(type_filter='classifier')
