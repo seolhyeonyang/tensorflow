@@ -33,6 +33,6 @@ model = RandomForestRegressor()
 # 3. 컴파일, 훈련
 # 4. 평가, 예측
 
-scores = cross_val_score(model, x, y, cv=kfold)
+scores = cross_val_score(model, x, y, cv=kfold, scoring='r2')
 
 print('Acc :', scores, round(np.mean(scores),4))
