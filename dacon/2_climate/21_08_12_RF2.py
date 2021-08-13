@@ -84,11 +84,11 @@ np.save('/study2/dacon/2_climate/_data/y_data.npy', arr=train['label'])
 np.save('/study2/dacon/2_climate/_data/y_predict.npy', arr=test_features)
 
 #훈련 데이터 셋과 검증 데이터 셋으로 분리
-# TEST_SIZE=0.2
-# RANDOM_SEED=42
-
 TEST_SIZE=0.2
-RANDOM_SEED=78
+RANDOM_SEED=42
+
+# TEST_SIZE=0.2
+# RANDOM_SEED=78
 
 x_train, x_test, y_train, y_test=train_test_split(train_features, train['label'], test_size=TEST_SIZE, random_state=RANDOM_SEED)
 
@@ -161,8 +161,8 @@ y_predict = forest.predict(test_features)
 
 sample_submission['label']=forest.predict(test_features)
 
-sample_submission.to_csv('/study2/dacon/2_climate/_save/rf_m_s_s_3.csv', index=False)
+sample_submission.to_csv('/study2/dacon/2_climate/_save/rf_2.csv', index=False)
 
 # print('f1 : ', f1_score(eval_y, y_predict, average='macro'))
 
-# scores = cross_val_score(forest, x_test, y_test, cv=kfold, scoring='f1')
+# scores = cross_val_score(forest, x_test, y_test, cv=kfold, scoring='macro')

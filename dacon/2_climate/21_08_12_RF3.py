@@ -79,24 +79,7 @@ test_features=vectorizer.transform(clean_test_text)
 
 train_features
 
-np.save('/study2/dacon/2_climate/_data/x_data.npy', arr=train_features)
-np.save('/study2/dacon/2_climate/_data/y_data.npy', arr=train['label'])
-np.save('/study2/dacon/2_climate/_data/y_predict.npy', arr=test_features)
-
-#훈련 데이터 셋과 검증 데이터 셋으로 분리
-# TEST_SIZE=0.2
-# RANDOM_SEED=42
-
-TEST_SIZE=0.2
-RANDOM_SEED=78
-
-x_train, x_test, y_train, y_test=train_test_split(train_features, train['label'], test_size=TEST_SIZE, random_state=RANDOM_SEED)
-
-# np.save('/study2/dacon/2_climate/_data/x_train.npy', arr=x_train)
-# np.save('/study2/dacon/2_climate/_data/y_train.npy', arr=y_train)
-# np.save('/study2/dacon/2_climate/_data/x_test.npy', arr=x_test)
-# np.save('/study2/dacon/2_climate/_data/y_test.npy', arr=y_test)
-
+x_train, x_test, y_train, y_test=train_test_split(train_features, train['label'], train_size=0.8, random_state=66)
 
 
 #랜덤포레스트로 모델링
@@ -109,8 +92,9 @@ from sklearn.model_selection import KFold, cross_val_score
 n_splits=5
 kfold = KFold(n_splits=n_splits, shuffle=True, random_state=66)
 
-''' parmeters = [
+parmeters = [
     {'n_jobs' : [-1], 'n_estimators' : [100, 200], 'max_depth' : [6, 8, 10], 'min_samples_leaf' : [5, 7, 10]},
+    {'n_jobs' : [-1], 'n_estimators' : [100, 200], 'max_depth' : [3, 5, 4], 'min_samples_leaf' : [2, 4, 8]},
     {'n_jobs' : [-1], 'max_depth' : [6, 8, 10], 'min_samples_leaf' : [3, 6, 9, 11], 'min_samples_split' : [3, 4, 5]},
     {'n_jobs' : [-1], 'min_samples_leaf' : [3, 5, 7], 'min_samples_split' : [3, 4, 5]},
     {'n_jobs' : [-1], 'min_samples_split' : [2, 3, 5, 10]},
@@ -118,11 +102,11 @@ kfold = KFold(n_splits=n_splits, shuffle=True, random_state=66)
 
 ]
 
-# forest=RandomizedSearchCV(RandomForestClassifier(), parmeters, cv=kfold, verbose=1)
-forest=GridSearchCV(RandomForestClassifier(), parmeters, cv=kfold, verbose=1)
+forest=RandomizedSearchCV(RandomForestClassifier(), parmeters, cv=kfold, verbose=1)
+# forest=GridSearchCV(RandomForestClassifier(), parmeters, cv=kfold, verbose=1)
 
 
-forest.fit(train_x, train_y)
+forest.fit(x_train, y_train)
 
 #모델 검증
 print('최적의 매개변수 : ', forest.best_estimator_)
@@ -134,8 +118,8 @@ print('best_params_ : ', forest.best_params_)
 print('best_score_ : ', forest.best_score_)
 # best_score_ :  0.9104436853770377
 
-print(forest.score(eval_x, eval_y))
-# 0.9203981526634348 '''
+print(forest.score(x_test, y_test))
+# 0.9203981526634348
 
 '''
 최적의 매개변수 :  RandomForestClassifier(n_estimators=200, n_jobs=-1)
@@ -145,7 +129,7 @@ best_score_ :  0.9108022733429737
 '''
 
 
-#랜덤포레스트로 모델링
+''' #랜덤포레스트로 모델링
 
 forest=RandomForestClassifier(min_samples_split= 3,  n_jobs= -1)
 
@@ -157,12 +141,12 @@ forest.score(x_test, y_test)
 
 print(forest.score(x_test, y_test))
 
-y_predict = forest.predict(test_features)
+y_predict = forest.predict(y_pred)
 
-sample_submission['label']=forest.predict(test_features)
+sample_submission['label']=forest.predict(y_pred)
 
-sample_submission.to_csv('/study2/dacon/2_climate/_save/rf_m_s_s_3.csv', index=False)
+sample_submission.to_csv('/study2/dacon/2_climate/_save/rf_2.csv', index=False)
 
 # print('f1 : ', f1_score(eval_y, y_predict, average='macro'))
 
-# scores = cross_val_score(forest, x_test, y_test, cv=kfold, scoring='f1')
+# scores = cross_val_score(forest, x_test, y_test, cv=kfold, scoring='macro')'''
