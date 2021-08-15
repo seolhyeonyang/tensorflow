@@ -88,22 +88,32 @@ from sklearn.model_selection import KFold, RandomizedSearchCV, GridSearchCV
 from xgboost import XGBClassifier
 from sklearn.model_selection import KFold, cross_val_score
 
-#랜덤서치/그리드 서치(랜덤포레스트)
-""" n_splits=5
+""" #랜덤서치/그리드 서치(랜덤포레스트)
+n_splits=5
 kfold = KFold(n_splits=n_splits, shuffle=True, random_state=66)
 
+# parmeters = [
+#     {'n_jobs' : [-1], 'n_estimators' : [100, 200], 'max_depth' : [6, 8, 10], 'min_samples_leaf' : [5, 7, 10]},
+#     {'n_jobs' : [-1], 'n_estimators' : [100, 200, 300], 'max_depth' : [3, 5, 4], 'min_samples_leaf' : [2, 4, 8]},
+#     {'n_jobs' : [-1], 'max_depth' : [6, 8, 10], 'min_samples_leaf' : [3, 6, 9, 11], 'min_samples_split' : [3, 4, 5]},
+#     {'n_jobs' : [-1], 'min_samples_leaf' : [3, 5, 7], 'min_samples_split' : [3, 4, 5]},
+#     {'n_jobs' : [-1], 'min_samples_split' : [2, 3, 5, 10]},
+#     {'n_jobs' : [-1], 'n_estimators' : [100, 200], 'min_samples_split' : [2, 3, 5, 10]},
+
+# ]
+
 parmeters = [
-    {'n_jobs' : [-1], 'n_estimators' : [100, 200], 'max_depth' : [6, 8, 10], 'min_samples_leaf' : [5, 7, 10]},
-    {'n_jobs' : [-1], 'n_estimators' : [100, 200, 300], 'max_depth' : [3, 5, 4], 'min_samples_leaf' : [2, 4, 8]},
-    {'n_jobs' : [-1], 'max_depth' : [6, 8, 10], 'min_samples_leaf' : [3, 6, 9, 11], 'min_samples_split' : [3, 4, 5]},
-    {'n_jobs' : [-1], 'min_samples_leaf' : [3, 5, 7], 'min_samples_split' : [3, 4, 5]},
-    {'n_jobs' : [-1], 'min_samples_split' : [2, 3, 5, 10]},
-    {'n_jobs' : [-1], 'n_estimators' : [100, 200], 'min_samples_split' : [2, 3, 5, 10]},
+    {'n_estimators' : [100,200, 300], 'learning_rate' : [0.1, 0.001, 0.5],
+    'max_depth' : [4, 5, 6], 'colsample_bytree' : [0.6, 0.9, 1], 'colsample_bylevel' : [0.6, 0.7, 0.9]},
+    {'n_estimators' : [100,200, 300], 'learning_rate' : [0.01, 0.001, 0.5], 'max_depth' : [4, 5, 6]},
+    {'n_estimators' : [200, 300], 'colsample_bytree' : [0.3, 0.5, 1], 'colsample_bylevel' : [0.5, 0.8, 0.9]},
 
 ]
 
-forest=RandomizedSearchCV(RandomForestClassifier(), parmeters, cv=kfold, verbose=1)
+# forest=RandomizedSearchCV(RandomForestClassifier(), parmeters, cv=kfold, verbose=1)
 # forest=GridSearchCV(RandomForestClassifier(), parmeters, cv=kfold, verbose=1)
+# forest=GridSearchCV(XGBClassifier(), parmeters, cv=kfold, verbose=1)
+# forest=RandomForestClassifier(XGBClassifier(), parmeters, verbose=1)
 
 
 forest.fit(x_train, y_train)
@@ -131,13 +141,18 @@ best_score_ :  0.9108022733429737
 
 #랜덤포레스트
 
-forest=RandomForestClassifier(n_estimators=1000, min_samples_split= 3,  n_jobs= -1)
+# forest=RandomForestClassifier(n_estimators=100, min_samples_split= 3,  n_jobs= -1)
+parmeters = [
+    {'n_estimators' : [100,200, 300], 'learning_rate' : [0.1, 0.001, 0.5],
+    'max_depth' : [4, 5, 6], 'colsample_bytree' : [0.6, 0.9, 1], 'colsample_bylevel' : [0.6, 0.7, 0.9]},
+    {'n_estimators' : [100,200, 300], 'learning_rate' : [0.01, 0.001, 0.5], 'max_depth' : [4, 5, 6]},
+    {'n_estimators' : [200, 300], 'colsample_bytree' : [0.3, 0.5, 1], 'colsample_bylevel' : [0.5, 0.8, 0.9]},
 
-# forest = XGBClassifier()
+]
 
-forest.fit(x_train, y_train, verbose=1, 
-            eval_set=[(x_train, y_train), (x_test, y_test)], 
-            early_stopping_rounds=10)
+forest = XGBClassifier(learning_rate = 0.01, max_depth=5, colsample_bytree =0.6, colsample_bylevel = 0.5)
+
+forest.fit(x_train, y_train)
 
 forest.score(x_test, y_test)
 
@@ -147,7 +162,7 @@ y_predict = forest.predict(test_features)
 
 sample_submission['label']=forest.predict(test_features)
 
-sample_submission.to_csv('/study2/dacon/2_climate/_save/rf_08_13.csv', index=False)
+sample_submission.to_csv('/study2/dacon/2_climate/_save/xgb_15.csv', index=False)
 
 # print('f1 : ', f1_score(eval_y, y_predict, average='macro'))
 
