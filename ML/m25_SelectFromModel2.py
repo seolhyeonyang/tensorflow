@@ -113,4 +113,16 @@ for thresh in threshold:
 
     print('Thresh=%.3f, n=%d, R2: %.2f%%' %(thresh, select_x_train.shape[1], score*100))
 
+'''
+(353, 8) (89, 8)
+Thresh=0.054, n=8, R2: 38.15%
+(353, 7) (89, 7)
+Thresh=0.055, n=7, R2: 33.17%
+(353, 6) (89, 6)
+Thresh=0.058, n=6, R2: 37.53%
+(353, 5) (89, 5)
+Thresh=0.065, n=5, R2: 37.62%
+(353, 4) (89, 4)
+Thresh=0.105, n=4, R2: 39.87%
+'''
 
