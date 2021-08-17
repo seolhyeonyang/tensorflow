@@ -12,3 +12,5 @@ logs
 /dacon/2_climate/_save/
 bert_ckpt
 data_in
+/dacon/samsung_scientific/_data/
+/dacon/samsung_scientific/_save/
