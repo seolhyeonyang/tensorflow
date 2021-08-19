@@ -12,17 +12,25 @@ aaa = aaa.transpose()
 print(aaa.shape)
 
 def outliers(data_out):
-    quartile_1, q2, quartile_3 = np.percentile(data_out, [25, 50, 75])
-    print('1사분위 : ', quartile_1)
-    print('q2 : ', q2)
-    print('3사분위 : ', quartile_3)
-    iqr = quartile_3 - quartile_1
-    lower_bound = quartile_1 - (iqr * 1.5)
-    upper_bound = quartile_3 - (iqr * 1.5)
-    # print(iqr)
-    # print(lower_bound)
-    # print(upper_bound)
-    return np.where((data_out>upper_bound) & (data_out<lower_bound))
+    n_list = []
+    for i in range(data_out.shape[1]):
+        quartile_1, q2, quartile_3 = np.percentile(data_out, [25, 50, 75])
+        print('1사분위 : ', quartile_1)
+        print('q2 : ', q2)
+        print('3사분위 : ', quartile_3)
+        iqr = quartile_3 - quartile_1
+        lower_bound = quartile_1 - (iqr * 1.5)
+        upper_bound = quartile_3 - (iqr * 1.5)
+        # print(iqr)
+        # print(lower_bound)
+        # print(upper_bound)
+        
+        m = np.where((data_out[:, i]>upper_bound) | (data_out[:, i]<lower_bound))
+        n = np.count_nonzero((data_out[:, i]>upper_bound) | (data_out[:, i]<lower_bound))
+        #! count_nonzero 요소 개수세기(정수 값 또는 정수 값 배열을 반환)
+        n_list.append([i+1,'columns', m, 'outlier_num :', n])
+    return np.array(n_list)
+
 
 outliers_loc = outliers(aaa)
 
