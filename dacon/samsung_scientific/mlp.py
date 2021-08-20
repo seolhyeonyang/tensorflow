@@ -136,4 +136,4 @@ test_y = model.predict(np_test_fps_array)
 ss['ST1_GAP(eV)'] = test_y
 
 
-ss.to_csv("/study2/dacon/samsung_scientific/_data/pattern_mlp.csv",index=False)
+ss.to_csv("/study2/dacon/samsung_scientific/_save/pattern_mlp.csv",index=False)

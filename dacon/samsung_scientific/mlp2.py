@@ -103,31 +103,31 @@ print(np_test_fps_array.shape)
 import tensorflow as tf
 from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.layers import Dense, Dropout, Input
-
-# def create_deep_learning_model():
-#     model = Sequential()
-#     model.add(Dense(2048, input_dim=2048, kernel_initializer='normal', activation='relu'))
-#     model.add(Dense(1024, activation='relu'))
-#     model.add(Dense(100, activation='relu'))
-#     model.add(Dense(1, kernel_initializer='normal'))
-#     model.compile(loss='mean_absolute_error', optimizer='adam')
-#     return model
-
 from tensorflow.keras.optimizers import Adam
 
-def create_deep_learning_model(drop=0.5, learning_rate=0.001, activation='relu', node = 512):
-    inputs = Input(shape=(2048), name='input')
-    x = Dense(node,  kernel_initializer='normal', name='hidden1')(inputs)
-    x= Dropout(drop)(x)
-    x = Dense(node/2, activation=activation, name='hidden2')(x)
-    x= Dropout(drop)(x)
-    x = Dense(node/4, activation=activation, name='hidden3')(x)
-    x= Dropout(drop)(x)
-    outputs = Dense(1,  kernel_initializer='normal',name='output')(x)
-    model = Model(inputs=inputs, outputs=outputs)
-    model.compile(optimizer=Adam(learning_rate),
-                loss='mean_absolute_error')
+def create_deep_learning_model():
+    model = Sequential()
+    model.add(Dense(2048, input_dim=2048, kernel_initializer='normal', activation='relu'))
+    model.add(Dense(1024, activation='relu'))
+    model.add(Dense(100, activation='relu'))
+    model.add(Dense(1, kernel_initializer='normal'))
+    model.compile(loss='mean_absolute_error', optimizer=Adam(learning_rate=0.01))
     return model
+
+
+# def create_deep_learning_model(drop=0.5, learning_rate=0.001, activation='relu', node = 512):
+#     inputs = Input(shape=(2048), name='input')
+#     x = Dense(node,  kernel_initializer='normal', name='hidden1')(inputs)
+#     x= Dropout(drop)(x)
+#     x = Dense(node/2, activation=activation, name='hidden2')(x)
+#     x= Dropout(drop)(x)
+#     x = Dense(node/4, activation=activation, name='hidden3')(x)
+#     x= Dropout(drop)(x)
+#     outputs = Dense(1,  kernel_initializer='normal',name='output')(x)
+#     model = Model(inputs=inputs, outputs=outputs)
+#     model.compile(optimizer=Adam(learning_rate),
+#                 loss='mean_absolute_error')
+#     return model
 
 
 X, Y = np_train_fps_array , np.array(train_y)
@@ -169,19 +169,19 @@ def create_hyperparameter():
 
 hyperparamters = create_hyperparameter()
 
-# model = create_deep_learning_model()
-es = EarlyStopping(monitor='val_loss', patience=10, mode='min', verbose=1, restore_best_weights=True)
-model = RandomizedSearchCV(model2, hyperparamters ,cv=4)
-model.fit(X, Y, epochs = 10000, callbacks=[es], validation_split=0.2)
+model = create_deep_learning_model()
+es = EarlyStopping(monitor='loss', patience=30, mode='min', verbose=1, restore_best_weights=True)
+# model = RandomizedSearchCV(model2, hyperparamters ,cv=4)
+model.fit(X, Y, epochs = 10000, callbacks=[es])
 # model = XGBRegressor(n_estimators=2000, learning_rate=0.05, n_jobs=-1)
 # model.fit(x_train, y_train, verbose=1, eval_metric=['rmse', 'mae'], eval_set=[(x_train, y_train), (x_test, y_test)], early_stopping_rounds=10)
 
-print(model.best_params_)
-print(model.best_estimator_)
-print(model.best_score_)
+# print(model.best_params_)
+# print(model.best_estimator_)
+# print(model.best_score_)
 
 test_y = model.predict(np_test_fps_array)
 ss['ST1_GAP(eV)'] = test_y
 
 
-ss.to_csv("/study2/dacon/samsung_scientific/_save/pattern_mlp5.csv",index=False)
+ss.to_csv("/study2/dacon/samsung_scientific/_save/mlp2.csv",index=False)
