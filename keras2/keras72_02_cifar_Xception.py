@@ -11,25 +11,24 @@ import time
 (x_train, y_train), (x_test, y_test) = cifar10.load_data()
 # (x_train, y_train), (x_test, y_test) = cifar100.load_data()
 
-x_train = x_train.reshape(50000, 3072)
-x_test = x_test.reshape(10000, 3072)
+# x_train = x_train.reshape(50000, 3072)
+# x_test = x_test.reshape(10000, 3072)
 
-# scaler = MinMaxScaler()
-scaler = RobustScaler()
-x_train = scaler.fit_transform(x_train)
-x_test = scaler.transform(x_test)
+# # scaler = MinMaxScaler()
+# scaler = RobustScaler()
+# x_train = scaler.fit_transform(x_train)
+# x_test = scaler.transform(x_test)
 
-x_train = x_train.reshape(50000, 32, 32, 3)
-x_test = x_test.reshape(10000, 32, 32, 3)
+# x_train = x_train.reshape(50000, 32, 32, 3)
+# x_test = x_test.reshape(10000, 32, 32, 3)
 
 
 print(x_train.shape, x_test.shape, y_train.shape, y_test.shape)
 # (50000, 32, 32, 3) (10000, 32, 32, 3) (50000, 10) (10000, 10)
 
 # 2. 모델
-xception = Xception(weights='imagenet', include_top=False, input_shape=(32, 32, 3))
-# xception = Xception()
-# xception.summary()
+xception = Xception(weights='imagenet', include_top=False, input_shape=(96, 96, 3))
+
 # xception.trainable = False
 
 model = Sequential()
