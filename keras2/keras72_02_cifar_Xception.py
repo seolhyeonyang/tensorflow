@@ -1,4 +1,4 @@
-from tensorflow.keras.layers import Dense, Flatten, GlobalAveragePooling2D
+from tensorflow.keras.layers import Dense, Flatten, GlobalAveragePooling2D, UpSampling2D
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.applications import Xception
 from tensorflow.keras.datasets import cifar10, cifar100
@@ -11,27 +11,29 @@ import time
 (x_train, y_train), (x_test, y_test) = cifar10.load_data()
 # (x_train, y_train), (x_test, y_test) = cifar100.load_data()
 
-# x_train = x_train.reshape(50000, 3072)
-# x_test = x_test.reshape(10000, 3072)
+x_train = x_train.reshape(50000, 3072)
+x_test = x_test.reshape(10000, 3072)
 
-# # scaler = MinMaxScaler()
-# scaler = RobustScaler()
-# x_train = scaler.fit_transform(x_train)
-# x_test = scaler.transform(x_test)
+# scaler = MinMaxScaler()
+scaler = RobustScaler()
+x_train = scaler.fit_transform(x_train)
+x_test = scaler.transform(x_test)
 
-# x_train = x_train.reshape(50000, 32, 32, 3)
-# x_test = x_test.reshape(10000, 32, 32, 3)
+x_train = x_train.reshape(50000, 32, 32, 3)
+x_test = x_test.reshape(10000, 32, 32, 3)
 
 
 print(x_train.shape, x_test.shape, y_train.shape, y_test.shape)
 # (50000, 32, 32, 3) (10000, 32, 32, 3) (50000, 10) (10000, 10)
 
 # 2. 모델
-xception = Xception(weights='imagenet', include_top=False, input_shape=(96, 96, 3))
+xception = Xception(weights='imagenet', include_top=False, input_shape=(32*3, 32*3, 3))
+#! Xception은 input_shape(71, 71, n)이 넘어야 함
 
-# xception.trainable = False
+xception.trainable = False
 
 model = Sequential()
+model.add(UpSampling2D(size=(3, 3), input_shape=(32, 32, 3)))
 model.add(xception)
 model.add(Flatten())
 # model.add(GlobalAveragePooling2D())
@@ -58,19 +60,25 @@ print('loss : ', loss[0])
 print('accuracy : ', loss[1])
 
 '''
-1. cifar10
+#^ 1. cifar10
 #? trainalbe = True 
 #? FC
+걸린 시간 :  4026.915381193161
+loss :  0.7623346447944641
+accuracy :  0.8618000149726868
 
 #? GAP
 
 
 #? trainalbe = False 
 #? FC
+걸린 시간 :  275.4032824039459
+loss :  1.7357308864593506
+accuracy :  0.7310000061988831
 
 #? GAP
 
-2. cifar100
+#^ 2. cifar100
 #? trainalbe = True 
 #? FC
 
