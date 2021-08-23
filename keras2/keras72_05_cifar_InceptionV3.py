@@ -1,4 +1,4 @@
-from tensorflow.keras.layers import Dense, Flatten, GlobalAveragePooling2D
+from tensorflow.keras.layers import Dense, Flatten, GlobalAveragePooling2D, UpSampling2D
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.applications import InceptionV3
 from tensorflow.keras.datasets import cifar10, cifar100
@@ -27,11 +27,13 @@ print(x_train.shape, x_test.shape, y_train.shape, y_test.shape)
 # (50000, 32, 32, 3) (10000, 32, 32, 3) (50000, 10) (10000, 10)
 
 # 2. 모델
-inceptionV3 = InceptionV3(weights='imagenet', include_top=False, input_shape=(32, 32, 3))
+inceptionV3 = InceptionV3(weights='imagenet', include_top=False, input_shape=(32*3, 32*3, 3))
+#! InceptionV3은 input_shape(75, 75, n)이 넘어야 함
 
 # inceptionV3.trainable = False
 
 model = Sequential()
+model.add(UpSampling2D(size=(3, 3), input_shape=(32, 32, 3)))
 model.add(inceptionV3)
 model.add(Flatten())
 # model.add(GlobalAveragePooling2D())
