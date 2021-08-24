@@ -7,8 +7,11 @@ from tensorflow.python.client.session import Session
 tf.set_random_seed(77)
 #^ radom_state 와 같은것
 
-x_train = [1, 2, 3]
-y_train = [1, 2, 3]
+# x_train = [1, 2, 3]
+# y_train = [1, 2, 3]
+
+x_train = tf.compat.v1.placeholder(tf.float32, shape=[None])
+y_train = tf.compat.v1.placeholder(tf.float32, shape=[None])
 
 # W = tf.Variable([1], dtype=tf.float32)
 # b = tf.Variable([1], dtype=tf.float32)
@@ -27,6 +30,7 @@ sess = Session()
 sess.run(tf.global_variables_initializer())
 
 for step in range(2001):
-    sess.run(train)
+    _, loss_val, W_val, b_val = sess.run([train, loss, W, b], feed_dict={x_train:[1, 2, 3], y_train:[1, 2, 3]})
     if step % 20 == 0:
-        print(step, sess.run(loss), sess.run(W), sess.run(b))
+        # print(step, sess.run(loss), sess.run(W), sess.run(b))
+        print(step, loss_val, W_val, b_val)
