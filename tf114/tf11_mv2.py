@@ -35,10 +35,10 @@ sess = tf.Session()
 sess.run(tf.global_variables_initializer())
 
 for epochs in range(2001):
-    cost_val, hy_val, _ = sess.run([cost, hypothesis, train], 
-                                    feed_dict={x:x_data, y:y_data})
-    if epochs % 10 == 0:
-        print(epochs, 'cost : ', cost_val, '\n', hy_val)
-    
+        cost_val, hy_val, _ = sess.run([cost, hypothesis, train], 
+                                feed_dict={x:x_data, y:y_data})
+        if epochs % 10 == 0:
+                print(epochs, 'cost : ', cost_val, '\n', hy_val)
+
 
 sess.close()
