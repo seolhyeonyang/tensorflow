@@ -117,4 +117,9 @@ learning_rate = 0.0001
 training_epochs = 50
 batch_size = 50
 ACC :  0.6927
+
+learning_rate = 0.0001
+training_epochs = 50
+batch_size = 100
+ACC :  0.6936
 '''
