@@ -108,8 +108,13 @@ from tensorflow.keras.layers import Dense, Dropout
 def create_deep_learning_model():
     model = Sequential()
     model.add(Dense(2048, input_dim=2048, kernel_initializer='normal', activation='relu'))
-    model.add(Dense(1024, activation='relu'))
-    model.add(Dense(100, activation='relu'))
+    model.add(Dropout(0.8))
+    # model.add(Dense(1024, activation='relu'))
+    # model.add(Dropout(0.2))
+    # model.add(Dense(512, activation='relu'))
+    # model.add(Dropout(0.2))
+    model.add(Dense(128, activation='relu'))
+    model.add(Dropout(0.2))
     model.add(Dense(1, kernel_initializer='normal'))
     model.compile(loss='mean_absolute_error', optimizer='adam')
     return model
@@ -131,11 +136,13 @@ estimators = []
 # results = cross_val_score(pipeline, X, Y, cv=kfold)
 # print("%.2f (%.2f) MAE" % (results.mean(), results.std()))
 
+import autokeras as ak
 model = create_deep_learning_model()
+# model = ak.StructuredDataRegressor(overwrite=True, max_trials=2)
 es = EarlyStopping(monitor='val_loss', patience=10, mode='min', verbose=1, restore_best_weights=True)
-model.fit(X, Y, epochs = 10000, callbacks=[es], validation_split=0.2)
+model.fit(X, Y, epochs = 1000, callbacks=[es], validation_split=0.2, batch_size=30)
 test_y = model.predict(np_test_fps_array)
 ss['ST1_GAP(eV)'] = test_y
 
 
-ss.to_csv("/study2/dacon/samsung_scientific/_save/pattern_mlp5.csv",index=False)
+ss.to_csv("/study2/dacon/samsung_scientific/_save/pattern_mlp7.csv",index=False)
